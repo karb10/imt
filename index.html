@@ -134,7 +134,8 @@
 
         const ADMIN_PASSWORD = '123'; // Dəyişdirin
 
-        let quizData = [
+        // Məlumatların saxlanılması üçün localStorage istifadə olunur
+        let quizData = JSON.parse(localStorage.getItem('quizData')) || [
             {
                 category: "riyaziyyat",
                 question: "2 + 2 nədir?",
@@ -167,11 +168,17 @@
             }
         ];
 
-        let categories = ["riyaziyyat", "az dili", "cografiya", "fizika"];
-        let activationCodes = [
+        let categories = JSON.parse(localStorage.getItem('categories')) || ["riyaziyyat", "az dili", "cografiya", "fizika"];
+        let activationCodes = JSON.parse(localStorage.getItem('activationCodes')) || [
             { code: "ABC123", category: "riyaziyyat" },
             { code: "XYZ789", category: "az dili" }
         ];
+
+        function saveToLocalStorage() {
+            localStorage.setItem('quizData', JSON.stringify(quizData));
+            localStorage.setItem('categories', JSON.stringify(categories));
+            localStorage.setItem('activationCodes', JSON.stringify(activationCodes));
+        }
 
         function showIframe() {
             activationCode.style.display = 'block';
@@ -191,6 +198,7 @@
             }
 
             activationCodes = activationCodes.filter(code => code.code !== activationCodeValue);
+            saveToLocalStorage();
             activationCode.style.display = 'none';
             categorySelection.style.display = 'block';
             renderCategoryCheckboxes(activationCodeEntry.category);
@@ -276,6 +284,7 @@
         function saveQuiz() {
             try {
                 quizData = JSON.parse(quizDataTextarea.value);
+                saveToLocalStorage();
                 alert('Quiz məlumatları uğurla yadda saxlanıldı!');
             } catch (e) {
                 alert('Yanlış JSON formatı');
@@ -288,6 +297,7 @@
                 categories.push(newCategory);
                 updateCategorySelect();
                 renderCategoryCheckboxes();
+                saveToLocalStorage();
                 alert('Kateqoriya uğurla əlavə olundu!');
             } else {
                 alert('Kateqoriya artıq mövcuddur və ya yanlışdır');
@@ -299,6 +309,7 @@
             categories = categories.filter(cat => cat !== selectedCategory);
             updateCategorySelect();
             renderCategoryCheckboxes();
+            saveToLocalStorage();
             alert('Kateqoriya uğurla silindi!');
         }
 
@@ -318,6 +329,7 @@
             if (newActivationCode && selectedCategory) {
                 activationCodes.push({ code: newActivationCode, category: selectedCategory });
                 updateActivationCodeSelect();
+                saveToLocalStorage();
                 alert('Aktivasiya kodu uğurla əlavə olundu!');
             } else {
                 alert('Aktivasiya kodu və ya kateqoriya yanlışdır');
@@ -328,6 +340,7 @@
             const selectedActivationCode = activationCodeSelect.value;
             activationCodes = activationCodes.filter(code => code.code !== selectedActivationCode);
             updateActivationCodeSelect();
+            saveToLocalStorage();
             alert('Aktivasiya kodu uğurla silindi!');
         }
 
